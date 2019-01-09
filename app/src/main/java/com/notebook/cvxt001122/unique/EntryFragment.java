@@ -166,7 +166,7 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
             databaseReference.child(key).child("interval").setValue(radioButtonReference);
             databaseReference.child(key).child("isbroadcasted").setValue(false);
 
-            Snackbar.make(constraintLayout, "data saved",Snackbar.LENGTH_SHORT ).show();
+            Snackbar.make(constraintLayout, "Data Saved",Snackbar.LENGTH_SHORT ).show();
             Handler handler=new Handler();
             handler.postDelayed(new Runnable() {
                 @Override

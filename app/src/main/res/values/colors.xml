@@ -3,9 +3,8 @@
     <color name="colorPrimary">#689BED</color>
     <color name="colorPrimaryDark">#5a87d6</color>
     <color name="colorAccent">#6384B4</color>
-    <color name="authbackground">#FFFFFF</color>
     <color name="fabcolor">#6384B4</color>
-    <color name="white">#FFF</color>
+    <color name="white">#fff</color>
 
 
 </resources>
