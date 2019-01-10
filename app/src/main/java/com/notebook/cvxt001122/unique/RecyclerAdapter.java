@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,8 +34,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<CardViewHolder> {
     public void onBindViewHolder(@NonNull CardViewHolder holder, int i) {
         if(holder instanceof CardViewHolder){
             ((CardViewHolder) holder).bookName.setText(bookList.get(i).getBookName());
-            ((CardViewHolder) holder).issuedDate.setText(bookList.get(i).getIssuedDate());
-            ((CardViewHolder) holder).returningDate.setText(bookList.get(i).getReturningDate());
+            DateHandler  handler=new DateHandler();
+            String [] date=bookList.get(i).getIssuedDate().split("/", 3);
+           // String returningdate=date[0]+"/"+(Integer.parseInt(date[1])+1)+"/"+date[2];
+            ((CardViewHolder) holder).issuedDate.setText(date[0]+" "+handler.getMonthName(Integer.parseInt(date[1]))+", "+date[2]);
+            date=bookList.get(i).getReturningDate().split("/", 3);
+           //  returningdate=date[0]+"/"+(Integer.parseInt(date[1])+1)+"/"+date[2];
+            ((CardViewHolder) holder).returningDate.setText(date[0]+" "+handler.getMonthName(Integer.parseInt(date[1]))+", "+date[2]);
+            String bookid=bookList.get(i).getBookId();
+            if(bookid==null||bookid.equals(""))
+                bookid="NA";
+            holder.bookId.setText(bookid);
             String value=bookList.get(i).getInterval();
             if(value==null)
                 value="null";

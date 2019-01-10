@@ -1,5 +1,7 @@
 package com.notebook.cvxt001122.unique;
 
+import com.google.android.gms.common.data.DataHolder;
+
 import java.util.Calendar;
 
 class DateHandler {
@@ -9,6 +11,9 @@ class DateHandler {
         this.calendar=calendar;
     }
 
+    public DateHandler(){
+
+    }
     public String getFormatedDate(){
         int date=calendar.get(Calendar.DATE);
         int month=calendar.get(Calendar.MONTH);

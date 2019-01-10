@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:tools="http://schemas.android.com/tools"
+<androidx.cardview.widget.CardView
+    android:id="@+id/root"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="30dp"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="0dp"
+    android:animateLayoutChanges="true"
+    android:background="#fff"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +19,7 @@
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context=".EntryFragment"
-        android:background="#F3c6af"
+        android:background="#f0f0f0"
         >
 
 
@@ -40,7 +44,7 @@
             android:gravity="center"
             android:textSize="20sp"
             android:padding="10dp"
-            android:background="#8e5554"
+            android:background="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -51,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:hint="Enter book name"
             app:boxCornerRadiusBottomEnd="10dp"
@@ -59,7 +63,7 @@
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
             app:counterEnabled="true"
-            app:counterMaxLength="30"
+            app:counterMaxLength="25"
             app:helperTextTextAppearance="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,14 +83,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:hint="Book issue date"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
-            app:helperTextTextAppearance="@color/colorAccent"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -102,6 +105,36 @@
                 android:drawableTint="#6384B4"
                 android:focusable="false"
                 android:inputType="date" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_3"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="Book id"
+            android:clickable="true"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:helperText="(optional)"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/text_input_edit_text3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:inputType="number"
+                />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -123,21 +156,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.03"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_2">
+            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_3">
 
             <RadioButton
                 android:id="@+id/parmanent"
                 style="@style/Widget.MaterialComponents.CompoundButton.RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/colorPrimary"
                 android:text="Permanent"
-                android:textColor="#000" />
+                android:textColor="#505050" />
 
             <RadioButton
                 android:id="@+id/temporary"
@@ -145,8 +178,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:buttonTint="@color/colorPrimary"
                 android:text="Temporary"
-                android:textColor="#000" />
+                android:textColor="#505050" />
         </RadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

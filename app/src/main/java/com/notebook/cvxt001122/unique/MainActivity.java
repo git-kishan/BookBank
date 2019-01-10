@@ -14,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -72,21 +73,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(user==null)
             startActivity(new Intent(MainActivity.this,AuthenticationActivity.class));
         uid=user.getUid();
-        // auth.getCurrentUser().get
         database=FirebaseDatabase.getInstance();
         reference=database.getReference().child(uid);
         initilization();
-
         adapter=new RecyclerAdapter(MainActivity.this,dataList ,MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         reference.addValueEventListener(eventListener);
-
-
-
-
-
-
     }
     private void initilization(){
         dataList=new ArrayList<>();
@@ -100,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar.inflateMenu(R.menu.toolbar_menu);
         toolbar.setLogo(R.drawable.book3);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white ));
-        //toolbar.setNavigationIcon(R.drawable.book);
         frameLayout=findViewById(R.id.fragment_container);
         fab=findViewById(R.id.fab);
         coordinatorLayout=findViewById(R.id.root_layout);
@@ -131,24 +123,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
         });
+
+
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         shimmerEffect.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmerAnimation();
-        handleBroadcasting();super.onRestart();
+        handleBroadcasting();
+        super.onResume();
 
     }
 
     @Override
     public void onClick(View view) {
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if(counter==0) {
-
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_down);
             Fragment fragment = new EntryFragment();
             fragmentTransaction.replace(R.id.fragment_container, fragment);
@@ -187,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         shimmerFrameLayout.stopShimmerAnimation();
         shimmerEffect.setVisibility(View.GONE);
         swipeRefreshLayout.setRefreshing(false);
+        fab.setVisibility(View.VISIBLE);
         super.onRestart();
 
     }
@@ -198,11 +193,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             keyList.clear();
             for(DataSnapshot snapshot:dataSnapshot.getChildren()){
                 keyList.add(snapshot.getKey());
-                String returningDate = (String) snapshot.child("returningdate").getValue();
                 String issuedDate = (String) snapshot.child("issuedate").getValue();
                 String bookName = (String) snapshot.child("bookname").getValue();
                 String interval = (String) snapshot.child("interval").getValue();
-                Model model = new Model(bookName, issuedDate, returningDate, interval,false);
+                String returningDate = (String) snapshot.child("returningdate").getValue();
+                String bookId=(String)snapshot.child("bookid").getValue();
+                Model model = new Model(bookName, issuedDate, returningDate, interval,false,bookId);
                 dataList.add(model);
 
             }
@@ -221,6 +217,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void menuClicked(final int position) {
         reference.child(keyList.get(position)).removeValue();
+
+
+    }
+
+    @Override
+    public void editClicked(int position) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment=new EntryFragment();
+        Bundle bundle=new Bundle();
+        bundle.putString("key", keyList.get(position));
+        fragment.setArguments(bundle);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_down);
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+        recyclerView.setVisibility(View.GONE);
 
 
     }
@@ -293,10 +306,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private int [] spilitReturningDate(String date){
         String [] day=date.split("/", 3);
-        int [] seperateDate=new int[] {Integer.parseInt(day[0]),Integer.parseInt(day[1]),Integer.parseInt(day[2])};
-        return seperateDate;
+        return new int[] {Integer.parseInt(day[0]),Integer.parseInt(day[1]),Integer.parseInt(day[2])};
+
     }
-    public void cardClicked(int position){
-        Toast.makeText(MainActivity.this,position+" is clicked" ,Toast.LENGTH_SHORT ).show();
-    }
+
 }

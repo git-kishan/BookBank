@@ -3,10 +3,12 @@ package com.notebook.cvxt001122.unique;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -38,8 +40,8 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private TextInputLayout bookNameInputLayout,issuedDateInputLayout;
-    private TextInputEditText bookNameInputEditText,issuedDateInputEditText;
+    private TextInputLayout bookNameInputLayout,issuedDateInputLayout,bookIdInputLayout;
+    private TextInputEditText bookNameInputEditText,issuedDateInputEditText,bookIdInputEditText;
     private MaterialButton saveButton,cancelButton;
     private ConstraintLayout constraintLayout;
     final Calendar calendar=Calendar.getInstance();
@@ -51,14 +53,35 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
     private RadioGroup radioGroup;
     private MaterialRadioButton radioButton;
     private String radioButtonReference="temp";
+    private String editKey;
+    private View view1,view2,view3;
+    private CardView cardView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_entry, container, false);
+        try {
+            editKey = getArguments().getString("key");
+        }catch (NullPointerException e){
+            Log.i("TAG", "null  pointer exception");
+        }
+        try {
+             view1 = getActivity().findViewById(R.id.shimmer);
+             view2 = getActivity().findViewById(R.id.shimmer_effect);
+             view3=getActivity().findViewById(R.id.fab);
+            view1.setVisibility(View.GONE);
+            view2.setVisibility(View.GONE);
+            view3.setVisibility(View.GONE);
+        }catch (NullPointerException e){
+            Log.i("TAG", "null pointer exception");
+        }
+        cardView=view.findViewById(R.id.root);
         bookNameInputEditText=view.findViewById(R.id.text_input_edit_text1);
         issuedDateInputEditText=view.findViewById(R.id.text_input_edit_text2);
         bookNameInputLayout=view.findViewById(R.id.text_input_layout_1);
         issuedDateInputLayout=view.findViewById(R.id.text_input_layout_2);
+        bookIdInputLayout=view.findViewById(R.id.text_input_layout_3);
+        bookIdInputEditText=view.findViewById(R.id.text_input_edit_text3);
         saveButton=view.findViewById(R.id.material_button_save);
         cancelButton=view.findViewById(R.id.material_button_cancel);
         radioGroup=view.findViewById(R.id.radio_group);
@@ -139,20 +162,18 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
     private void onSavedClicked(){
 
         boolean valid=checkValidation();
-        if(valid){
-            String bookname=bookNameInputEditText.getText().toString();
+        if(valid && editKey ==null){
+            String bookname=String.valueOf(bookNameInputEditText.getText());
             String issuedate=calendar.get(Calendar.DATE)+"/"+calendar.get(Calendar.MONTH)+"/"+calendar.get(Calendar.YEAR);
-
+            String bookId=String.valueOf(bookIdInputEditText.getText());
             if(MainActivity.temporary.equals(radioButtonReference)) {
                 Log.i("TAG","changing returning date" );
                 calendar.add(Calendar.DATE, 15);
             }
-
             if(MainActivity.parmanent.equals(radioButtonReference)) {
                 Log.i("TAG","changing returning date" );
                 calendar.add(Calendar.MONTH, 6);
             }
-
             String returningdate=calendar.get(Calendar.DATE)+"/"+calendar.get(Calendar.MONTH)+"/"+calendar.get(Calendar.YEAR);
             String key=databaseReference.push().getKey();
             if(key==null){
@@ -165,6 +186,7 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
             databaseReference.child(key).child("returningdate").setValue(returningdate);
             databaseReference.child(key).child("interval").setValue(radioButtonReference);
             databaseReference.child(key).child("isbroadcasted").setValue(false);
+            databaseReference.child(key).child("bookid").setValue(bookId);
 
             Snackbar.make(constraintLayout, "Data Saved",Snackbar.LENGTH_SHORT ).show();
             Handler handler=new Handler();
@@ -183,7 +205,59 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
 
         }
 
+        if(valid && editKey !=null){
+            String bookname=String.valueOf(bookNameInputEditText.getText());
+            String issuedate=calendar.get(Calendar.DATE)+"/"+calendar.get(Calendar.MONTH)+"/"+calendar.get(Calendar.YEAR);
+            String bookId=String.valueOf(bookIdInputEditText.getText());
+            if(MainActivity.temporary.equals(radioButtonReference)) {
+                Log.i("TAG","changing returning date" );
+                calendar.add(Calendar.DATE, 15);
+            }
+            if(MainActivity.parmanent.equals(radioButtonReference)) {
+                Log.i("TAG","changing returning date" );
+                calendar.add(Calendar.MONTH, 6);
+            }
+            String returningdate=calendar.get(Calendar.DATE)+"/"+calendar.get(Calendar.MONTH)+"/"+calendar.get(Calendar.YEAR);
+            String key=databaseReference.push().getKey();
+            if(key==null){
+                Snackbar.make(constraintLayout , "failed to add,try later", Snackbar.LENGTH_SHORT).show();
+                getActivity().onBackPressed();
+                return;
+            }
+            databaseReference.child(editKey).child("bookname").setValue(bookname);
+            databaseReference.child(editKey).child("issuedate").setValue(issuedate);
+            databaseReference.child(editKey).child("returningdate").setValue(returningdate);
+            databaseReference.child(editKey).child("interval").setValue(radioButtonReference);
+            databaseReference.child(editKey).child("isbroadcasted").setValue(false);
+            databaseReference.child(editKey).child("bookid").setValue(bookId);
+
+            Snackbar.make(constraintLayout, "Data Saved",Snackbar.LENGTH_SHORT ).show();
+            Handler handler=new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        getActivity().onBackPressed();
+                    }catch (NullPointerException e)
+                    {
+                        Log.i("TAG","exception on pressing back button in fragment:- "+e.getLocalizedMessage() );
+                    }
+
+                }
+            }, 2000);
+
+        }
+
+
     }
+
+    @Override
+    public void onDetach() {
+        view3.setVisibility(View.VISIBLE);
+        cardView.animate().translationY(cardView.getHeight()).setDuration(700);
+        super.onDetach();
+    }
+
     private void onCancelClicked(){
         getActivity().onBackPressed();
     }

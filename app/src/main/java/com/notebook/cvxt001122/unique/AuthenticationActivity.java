@@ -6,16 +6,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +32,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     private FirebaseUser user = null;
     private CoordinatorLayout coordinatorLayout;
     private Toolbar toolbar;
+    private DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +63,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         startActivityForResult(AuthUI.getInstance().
                 createSignInIntentBuilder().setAvailableProviders(providers).
                 setLogo(R.drawable.icon1).
-                setTheme(R.style.SignInTheme).
                 setIsSmartLockEnabled(false).build(), RC_SIGN_IN);
 
     }
@@ -68,26 +75,27 @@ public class AuthenticationActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if(resultCode==RESULT_OK){
-                showToast("signed in successfully");
+                showToast("Signed in successfully");
+
                 startActivity(new Intent(AuthenticationActivity.this,MainActivity. class));
                 finish();
 
             }
             else if(response.getError().getErrorCode()==ErrorCodes.NO_NETWORK)
             {
-                showSnackBar("no network");
+                showSnackBar("No network");
             }
             else if(response.getError().getErrorCode()==ErrorCodes.UNKNOWN_ERROR){
-                showSnackBar("unknown error");
+                showSnackBar("Unknown error");
             }
             else if(response.getError().getErrorCode()==ErrorCodes.PROVIDER_ERROR){
-                showSnackBar("unknown error");
+                showSnackBar("Unknown error");
 
             }
         }
         else
         {
-            showToast("sign in failed");
+            showToast("Sign in failed");
         }
     }
     private void showToast(String message){
@@ -97,4 +105,9 @@ public class AuthenticationActivity extends AppCompatActivity {
         Snackbar.make(coordinatorLayout,message ,Snackbar.LENGTH_SHORT ).show();
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+        super.onBackPressed();
+    }
 }

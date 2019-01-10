@@ -12,7 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CardViewHolder extends RecyclerView.ViewHolder {
-    TextView bookName,issuedDate,returningDate,interval,menuOption;
+    TextView bookName,issuedDate,returningDate,interval,menuOption,bookId;
     CardView cardView;
     public CardViewHolder(@NonNull View itemView, final Context context, final OnMenuClick referenceContext) {
         super(itemView);
@@ -20,7 +20,7 @@ public class CardViewHolder extends RecyclerView.ViewHolder {
         issuedDate=itemView.findViewById(R.id.issued_date);
         returningDate=itemView.findViewById(R.id.returning_date);
         interval=itemView.findViewById(R.id.interval);
-        cardView=itemView.findViewById(R.id.card_view);
+        bookId=itemView.findViewById(R.id.book_id);
 
         menuOption=itemView.findViewById(R.id.menu_option);
         menuOption.setText(Html.fromHtml("&#8942;"));
@@ -37,28 +37,19 @@ public class CardViewHolder extends RecyclerView.ViewHolder {
                         if(menuItem.getItemId()==R.id.delete){
                             referenceContext.menuClicked(getAdapterPosition());
                         }
+                        else if(menuItem.getItemId()==R.id.edit){
+                            referenceContext.editClicked(getAdapterPosition());
+                        }
                         return true;
                     }
                 });
                 popupMenu.show();
-
-
             }
         });
-        cardView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                referenceContext.cardClicked(getAdapterPosition());
-                return false;
-            }
-        });
-
-
-
     }
 }
 interface OnMenuClick{
     void menuClicked(int position);
-    void cardClicked(int position);
+    void editClicked(int position);
 }
 

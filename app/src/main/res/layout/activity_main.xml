@@ -8,19 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<com.google.android.material.appbar.AppBarLayout
-    android:id="@+id/appbar_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        app:contentInsetStart="20dp"
-        app:titleMarginStart="30dp"
-        app:layout_scrollFlags="exitUntilCollapsed"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
-
-</com.google.android.material.appbar.AppBarLayout>
+<include layout="@layout/toolbar"/>
 
   <com.facebook.shimmer.ShimmerFrameLayout
       android:id="@+id/shimmer"
@@ -58,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:src="@drawable/add"
-        app:rippleColor="#FFFFFF"
+        app:rippleColor="#F0f0f0"
         app:backgroundTint="@color/fabcolor"
         android:layout_margin="16dp"/>
     <FrameLayout
@@ -66,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp">
 
