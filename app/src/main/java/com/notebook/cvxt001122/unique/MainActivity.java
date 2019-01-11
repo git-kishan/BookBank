@@ -13,13 +13,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -29,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -63,31 +69,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout shimmerEffect;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<String> keyList=new ArrayList<>();
+    private ImageView noInternetImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        auth=FirebaseAuth.getInstance();
-        user=auth.getCurrentUser();
-        if(user==null)
-            startActivity(new Intent(MainActivity.this,AuthenticationActivity.class));
-        uid=user.getUid();
-        database=FirebaseDatabase.getInstance();
-        reference=database.getReference().child(uid);
+        coordinatorLayout=findViewById(R.id.root_layout);
+        appBarLayout=findViewById(R.id.appbar_layout);
+        shimmerFrameLayout=findViewById(R.id.shimmer);
+        shimmerEffect=findViewById(R.id.shimmer_effect);
+        noInternetImageView=findViewById(R.id.no_internet_image);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        if (user == null)
+            startActivity(new Intent(MainActivity.this, AuthenticationActivity.class));
+        uid = user.getUid();
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference().child(uid);
         initilization();
-        adapter=new RecyclerAdapter(MainActivity.this,dataList ,MainActivity.this);
+        adapter = new RecyclerAdapter(MainActivity.this, dataList, MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         reference.addValueEventListener(eventListener);
+
+
+
     }
+
     private void initilization(){
         dataList=new ArrayList<>();
         recyclerView=findViewById(R.id.recycler_view);
         layoutManager=new LinearLayoutManager(this);
-        appBarLayout=findViewById(R.id.appbar_layout);
-        shimmerFrameLayout=findViewById(R.id.shimmer);
-        shimmerEffect=findViewById(R.id.shimmer_effect);
         toolbar=findViewById(R.id.toolbar);
         toolbar.setTitle("Book Bank");
         toolbar.inflateMenu(R.menu.toolbar_menu);
@@ -95,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar.setTitleTextColor(getResources().getColor(R.color.white ));
         frameLayout=findViewById(R.id.fragment_container);
         fab=findViewById(R.id.fab);
-        coordinatorLayout=findViewById(R.id.root_layout);
         fab.setOnClickListener(this);
         swipeRefreshLayout=findViewById(R.id.swipe_refresh);
         keyList.clear();
@@ -106,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dataList.clear();
                 keyList.clear();
                 reference.addValueEventListener(eventListener);
+
             }
         });
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -130,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        super.onResume();
+
         shimmerEffect.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmerAnimation();
         handleBroadcasting();
@@ -140,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if(counter==0) {
@@ -206,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             shimmerFrameLayout.stopShimmerAnimation();
             shimmerEffect.setVisibility(View.GONE);
             swipeRefreshLayout.setRefreshing(false);
+            noInternetImageView.setVisibility(View.GONE);
         }
 
         @Override
@@ -220,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+
 
     @Override
     public void editClicked(int position) {
@@ -260,26 +276,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         bookName = (String) snapshot.child("bookname").getValue();
                     }
                     int [] seperateDate=spilitReturningDate(returningDate);
+
+
+
+                    Log.i("TAG", "data :- "+isBroadcasted);
                     if(!isBroadcasted){
                         Intent intent=new Intent(MainActivity.this,OneDayBeforeReceiver.class);
                         intent.putExtra("bookname",bookName );
                         int  broadcastId= (int) System.currentTimeMillis();
-                        //pending intent for one day before receiver
                         PendingIntent pendingIntent=PendingIntent.getBroadcast(MainActivity.this,broadcastId ,
                                 intent,PendingIntent.FLAG_ONE_SHOT );
                         AlarmManager alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
                         Calendar calendar=Calendar.getInstance();
                         calendar.setTimeInMillis(System.currentTimeMillis());
-                        calendar.set(Calendar.HOUR,8);
+                        calendar.set(Calendar.HOUR_OF_DAY,8);
                         calendar.set(Calendar.MINUTE,30);
                         calendar.set(Calendar.DATE,seperateDate[0]);
                         calendar.add(Calendar.DATE,-1 );
                         calendar.set(Calendar.MONTH,seperateDate[1]);
                         calendar.set(Calendar.YEAR,seperateDate[2] );
-                        if(calendar.getTimeInMillis()<System.currentTimeMillis()) {
+                        Log.i("TAG","bookname :- "+bookName );
+                        if(calendar.getTimeInMillis()>=System.currentTimeMillis()) {
                             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                            Log.i("TAG", "event fired");
                         }
-                        //pending intent for on day receiver
 
                         Intent secondIntent=new Intent(MainActivity.this,OnSubmitDayReceiver.class);
                         int  secondBroadcastId= (int) System.currentTimeMillis();
@@ -291,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), secondPendingIntent);
                         }
                         snapshot.child("isbroadcasted").getRef().setValue(true);
+                        noInternetImageView.setVisibility(View.GONE);
 
 
 

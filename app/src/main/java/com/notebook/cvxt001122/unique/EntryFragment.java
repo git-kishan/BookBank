@@ -163,6 +163,13 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
 
         boolean valid=checkValidation();
         if(valid && editKey ==null){
+
+            CheckInternetConnection connection=new CheckInternetConnection(getContext());
+            boolean check =connection.isInternetAvailable();
+            if(!check){
+                Snackbar.make(cardView, "No internet", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
             String bookname=String.valueOf(bookNameInputEditText.getText());
             String issuedate=calendar.get(Calendar.DATE)+"/"+calendar.get(Calendar.MONTH)+"/"+calendar.get(Calendar.YEAR);
             String bookId=String.valueOf(bookIdInputEditText.getText());

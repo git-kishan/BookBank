@@ -39,7 +39,7 @@ public class MyIntentService extends IntentService {
         builder.setSound(uri);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText("today is the last date of submit "+bookName+" book"));
         builder.setWhen(Calendar.getInstance().getTimeInMillis());
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.librarybig ));
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.book2 ));
         builder.setAutoCancel(true);
         Intent intent=new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);

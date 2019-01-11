@@ -40,7 +40,7 @@ public class HandleNotificationService extends IntentService {
         builder.setSound(uri);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText("One day left to submit "+bookName));
         builder.setWhen(Calendar.getInstance().getTimeInMillis());
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.librarybig ));
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.book2 ));
         builder.setAutoCancel(true);
         Intent intent=new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);

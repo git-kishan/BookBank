@@ -2,6 +2,7 @@ package com.notebook.cvxt001122.unique;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,15 +33,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int i) {
+
         if(holder instanceof CardViewHolder){
-            ((CardViewHolder) holder).bookName.setText(bookList.get(i).getBookName());
-            DateHandler  handler=new DateHandler();
-            String [] date=bookList.get(i).getIssuedDate().split("/", 3);
-           // String returningdate=date[0]+"/"+(Integer.parseInt(date[1])+1)+"/"+date[2];
-            ((CardViewHolder) holder).issuedDate.setText(date[0]+" "+handler.getMonthName(Integer.parseInt(date[1]))+", "+date[2]);
-            date=bookList.get(i).getReturningDate().split("/", 3);
-           //  returningdate=date[0]+"/"+(Integer.parseInt(date[1])+1)+"/"+date[2];
-            ((CardViewHolder) holder).returningDate.setText(date[0]+" "+handler.getMonthName(Integer.parseInt(date[1]))+", "+date[2]);
+            String[] date=null;
+            String returningdate="";
+                 ((CardViewHolder) holder).bookName.setText(bookList.get(i).getBookName());
+                 date = bookList.get(i).getIssuedDate().split("/", 3);
+                 returningdate = date[0] + "/" + (Integer.parseInt(date[1]) + 1) + "/" + date[2];
+                 ((CardViewHolder) holder).issuedDate.setText(returningdate);
+                date = bookList.get(i).getReturningDate().split("/", 3);
+                returningdate=date[0]+"/"+(Integer.parseInt(date[1])+1)+"/"+date[2];
+                ((CardViewHolder) holder).returningDate.setText(returningdate);
+            }
+
             String bookid=bookList.get(i).getBookId();
             if(bookid==null||bookid.equals(""))
                 bookid="NA";
@@ -54,7 +59,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<CardViewHolder> {
             }else value="Permanent";
             ((CardViewHolder) holder).interval.setText(value);
         }
-    }
+
 
     @Override
     public int getItemCount() {
